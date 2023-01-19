@@ -1,0 +1,383 @@
+```js
+function func(){
+    console.log("Statement 1 inside function");
+    for(var i=0;i<=5;i++){
+        //it is because var is a function scoped and everytime
+        //loop iterates it change the value of at the same memory
+        // locations without creating a copy of it hence at last the value
+        // of i will be what it last changed for last iteration of the loop
+        //
+    setTimeout(function(){
+        console.log(i);
+    },i*1000);
+    }
+    
+      
+}
+
+func();
+
+```
+
+<br/>
+
+output
+
+```js
+Statement 1 inside function
+6
+6
+6
+6
+6
+6
+```
+<br/>
+
+**Example using let will create a copy of `i` everytime the loop iterates instead of using the same value pointing to the same location in memory. `let` will allow to create multiple copies of it without destroying the outer declation as it is block scoped and will be limited to the loop only in this case.**
+
+
+<br/>
+
+```js
+function func(){
+    console.log("Statement 1 inside function");
+    for(let i=0;i<=5;i++){
+    setTimeout(function(){
+        console.log(i);
+    },i*1000);
+    }
+    
+      
+}
+
+func();
+
+```
+
+<br/>
+
+output
+
+```js
+Statement 1 inside function
+0
+1
+2
+3
+4
+5
+```
+
+<br/>
+
+the same concepts can be achived using closure in javascript. but first we need to understand what closure is.
+### Closure:
+A closure is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment). In other words, a closure gives you access to an outer function's scope from an inner function.
+
+EXAMPLE 1:
+
+```js
+A closure gives you access to an outer function’s scope from an inner function
+//example
+function init() {
+  var name = 'Mozilla'; // name is a local variable created by init
+  function displayName() { // displayName() is the inner function, a closure
+    alert(name); // use variable declared in the parent function
+  }
+  displayName();
+}
+init();
+
+
+```
+
+```js 
+
+******************************************************************
+function func(){
+    console.log("Statement 1 inside function");
+    for(var i=0;i<=5;i++){
+
+      iterates(i);
+    }
+    
+function iterates(i){    
+    setTimeout(function(){
+        console.log(i);
+    },i*1000);
+    
+    }
+      
+}
+
+func();
+
+```
+
+Output <br/>
+
+Statement 1 inside function
+0
+1
+2
+3
+4
+5
+
+
+#### Closure function example 2
+
+```js
+function outer(n){
+    var name=n;
+    function inner(){
+        console.log(name);
+    }
+    
+    inner();
+    
+}
+
+outer("darpan rajput")
+*********************************
+output:
+darpan rajput
+
+```
+
+**use Case 1 Singletons:**
+
+The term ‘singleton’ refers to a design pattern in which a given class is only instantiated once and only that one, single instance is ever made available publicly. This is a somewhat controversial design pattern for reasons that probably make more sense in a strict OOP architecture, but I think singletons can still be useful for some isolated services that are not a core part of your business logic. Folks with more experience in OOP will probably have a lot more to say on this topic.
+
+In the example below, we use the singleton pattern to construct a really naive logging service:
+```js
+const logger=(function(){
+    
+    const infoMessage="info";
+    const warningMessage="warning";
+    const errorMessage="Error";
+    
+    return {
+        
+        info:function(str){
+            console.log(`${infoMessage} ${str}`);
+        },
+        warning:function(str){
+                console.log(`${warningMessage} ${str}`);
+        },
+        error:function(str){
+                console.log(`${errorMessage} ${str}`);
+        }
+    }
+})();
+
+logger.info("hello");
+logger.warning("deprecated dependencies");
+logger.error("Reference error");
+**************************************************************
+output:
+info hello
+warning deprecated dependencies
+Error Reference error
+
+```
+
+**use case 2: Creating Higher Order Function**
+Higher-Order Functions
+A higher-order function is a function that either takes one or more functions as arguments or returns a function. This is a really useful concept that we can use to help us avoid having to write boilerplate code over and over. We can create higher-order functions that, in turn, create utility functions we can use any time we find ourselves repeatedly writing similar code.
+
+One simple example is a function that creates functions to help us round integers to a certain number of decimal places. Imagine in some cases we have a float that we want to round to the nearest whole number, while in some cases we want to maintain two decimal places.
+
+Here is the (somewhat) long version:
+
+```js
+function rounder(decimalPlace){
+    
+    return function (num){
+        return Number(num.toFixed(decimalPlace));
+    }
+}
+
+const num1=rounder(2);
+console.log(num1(8.9786823));
+
+```
+
+**use case 3:Accessing private state variables:**
+
+A note on private methods
+There is a common use case for closures in JavaScript that doesn’t appear in the list above, which is creating private variables and methods. A private method is a method that is only accessible inside of a class instance, such that classInstance.privateMethod() throws an error. These methods are called internally by other methods of the class, but are themselves not directly accessible from outside.
+
+Other languages like Java, for instance, have support for private methods, as well as other access modifiers that determine how certain methods or variables can be accessed. Traditionally, JavaScript did not have support for private methods, so closures were used to implement it instead.
+
+As of this writing there is a Stage 3 proposal from TC39 to add support for private methods to JavaScript, so we won’t really need closures for this anymore.
+
+The new syntax for declaring private methods is to prepend a # to the variable name, as follows:
+
+```js
+function Test(privateField){
+    const hidden=privateField;
+    
+    return{
+        getPrivateData:function(){
+            return hidden;
+        }
+    }
+}
+
+const test=Test("some private data");
+console.log(test.hidden);
+console.log(test.getPrivateData());
+
+*********************************************************
+output:undefined
+some private data
+
+```
+
+
+# Coercion
+JavaScript performs string concatenation when find +. So the first` "2"` and second `"2"` makes` "22"`.
+
+But when performing subtraction (-) on strings, coercion happens. So the resulted `"22"` coerced to number `22` and final `"2"` coerced to number 2. Finally subtracts 2 from `22` to result `20`.
+
+For More: Coercion
+
+Step by step evaluation:
+
+```js 
+2' + '2' - '2' To
+
+'22' - '2' To
+
+22 - 2 To 20
+```
+
+1. `[9]*8=72` but `[8,9]*9` is NAN
+2. `3+'3'='33'`
+3. `'h'-'i'=nan`
+4. `3*'3'=9`
+5. `3*'3'=9`
+6. `3-'3'=0;`
+5. `3/'3'=1;`
+
+![type-ofs](assets/some-typeofs.jpg)
+
+### Loops
+1. ![](assets/for-in-for-of%20loop.jpg)
+   
+### Objects loop
+1. ![](assets/for-in-for-of%20loop%20on%20objects.jpg)
+
+2. ``` js
+   // object to loop through
+    let obj = { first: "John", last: "Doe" };
+
+    // loop through object and log each key and value pair
+    //ECMAScript 5
+    Object.keys(obj).forEach(function(key) {
+        console.log(key, obj[key]);
+    });
+
+    //ECMAScript 6
+    for (const key of Object.keys(obj)) {
+        console.log(key, obj[key]);
+    }
+
+    //ECMAScript 8
+    Object.entries(obj).forEach(
+        ([key, value]) => console.log(key, value)
+    );
+
+    // OUTPUT
+    /*
+    first John
+    last Doe
+    */
+
+    const fruits = {
+    apple: 28,
+    orange: 17,
+    pear: 54,
+    }
+    console.log(Object.entries(fruits));
+    for(let [key,value] of Object.entries(fruits)){
+    console.log(key,value)
+    }
+
+    //output
+   // [ [ 'apple', 28 ], [ 'orange', 17 ], [ 'pear', 54 ] ]
+    //apple 28
+    //orange 17   
+    //pear 54
+    ```
+3. `Object.keys(myObj)` will always give the array of keys and then you can use for of loop over it.
+4. `Object.entries will give a array of array [[key1,value1],[key2,value2]]`
+
+## for-of vs for-in
+when you use for-in in array it will always give you the indices
+`for(let i in [9,0,7]){}` but for-of will take each item in the array.
+`for-in` over `object` gives the keys of the `objects` and for-of loop
+over object will not iterate over it.
+
+## reduce
+```js
+var array = [36, 25, 6, 15];
+
+array.reduce(function(accumulator, currentValue) {
+  return accumulator + currentValue;
+}, 0); // 36 + 25 + 6 + 15 = 82
+*************************************
+let x = [1, 2, 3]; // 2 % 2 == 0
+let v = x.reduce(e => e % 2 == 0);
+console.log(v) // true 
+//reduce return true or false
+```
+
+# how to get random number between two integers
+```js
+function getRandomArbitrary(min, max) {
+  let res=Math.random() * (max - min) + min;
+    return Math.round(res);
+}
+```
+# Predict the output of the code
+
+1. ```js
+
+    new Promise((resolve)=>resolve())
+    .then(()=>{throw Error('error-err')})
+    .catch(err=>'catch')
+    .catch(()=>console.log('catch again'))
+
+    ************************************
+    output:
+    catch
+
+    reason: promise gets resolve by calling only resolve function and reaches to the then statement but then function throw an error which is then catched by the
+    immediate catch block.
+    the next catch did not get execute because it was meant to be executed only for promise rejectionn.```
+
+2. ```js
+    let a=[1,2,3]
+    let b=[3,4,5,6]
+    console.log(a+b)
+    
+    the ouput will be string type because it performs string concatenation
+    1,2,33,4,5,6
+    ```
+
+# There are 12 types of behavioral design patterns:
+1. Chain of Responsibility Pattern
+2. Command Pattern
+3. Interpreter Pattern
+4. Iterator Pattern
+5. Mediator Pattern
+6. Memento Pattern
+7. Observer Pattern
+8. State Pattern
+9. Strategy Pattern
+10. Template Pattern
+11. Visitor Pattern
+12. Null Object
